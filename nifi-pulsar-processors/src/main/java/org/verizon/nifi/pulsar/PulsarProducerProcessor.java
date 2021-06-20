@@ -37,6 +37,7 @@ import org.apache.pulsar.client.api.Schema;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -140,12 +141,19 @@ public class PulsarProducerProcessor extends AbstractProcessor {
             final Iterator<FlowFile> its=  flowFiles.iterator();
             while(its.hasNext()) {
                 final FlowFile flowFile = its.next();
+                final byte[] demarcatorBytes = context.getProperty(MESSAGE_DEMARCATOR).isSet() ? context.getProperty(MESSAGE_DEMARCATOR)
+                        .evaluateAttributeExpressions(flowFile).getValue().getBytes(StandardCharsets.UTF_8) : null;
                 final NifiPulsarPublisher pulsarPublisher = new NifiPulsarPublisher(new InFlightMessageTracker(getLogger()), context);
                 final Boolean asyncEnabled = Boolean.valueOf(context.getProperty("asyncEnabled").getValue());
                 session.read(flowFile, new InputStreamCallback() {
                     @Override
                     public void process(InputStream inputStream) {
-                        pulsarPublisher.publish(flowFile, inputStream, asyncEnabled);
+                        if(demarcatorBytes != null) {
+                            pulsarPublisher.publish(flowFile, demarcatorBytes, inputStream, asyncEnabled);
+                        }
+                        else {
+                            pulsarPublisher.publish(flowFile, inputStream, asyncEnabled);
+                        }
                     }
                 });
 

@@ -4,6 +4,7 @@ import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.logging.ComponentLog;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.stream.io.StreamUtils;
+import org.apache.nifi.stream.io.util.StreamDemarcator;
 import org.apache.pulsar.client.api.Schema;
 
 import java.io.IOException;
@@ -27,6 +28,31 @@ public class NifiPulsarPublisher {
                                final ProcessContext context) {
         this.tracker = tracker;
         this.context = context;
+    }
+
+    void publish(final FlowFile flowFile, byte[] demarcatorBytes, final InputStream flowFileInputStream, Boolean asyncEnabled) {
+        byte[] messageContent;
+
+        try(final StreamDemarcator demarcator = new StreamDemarcator(flowFileInputStream, demarcatorBytes, Integer.MAX_VALUE)){
+            while ((messageContent = demarcator.nextToken()) != null) {
+                if (NifiPulsarProducer.getLease().get().send(messageContent) != null) {
+                    tracker.incrementSentCount(flowFile);
+                } else {
+                    tracker.trackEmpty(flowFile);
+                    break;  // Quit sending messages if we encounter a failure.
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            tracker.fail(flowFile, e);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            tracker.fail(flowFile, e);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            tracker.fail(flowFile, e);
+        }
+
     }
 
     /**
