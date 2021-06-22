@@ -16,31 +16,27 @@
  */
 package org.verizon.nifi.pulsar;
 
-import org.apache.nifi.annotation.behavior.*;
-import org.apache.nifi.annotation.lifecycle.OnShutdown;
+import org.apache.nifi.annotation.behavior.InputRequirement;
+import org.apache.nifi.annotation.behavior.WritesAttribute;
+import org.apache.nifi.annotation.behavior.WritesAttributes;
+import org.apache.nifi.annotation.documentation.CapabilityDescription;
+import org.apache.nifi.annotation.documentation.SeeAlso;
+import org.apache.nifi.annotation.documentation.Tags;
+import org.apache.nifi.annotation.lifecycle.OnScheduled;
 import org.apache.nifi.annotation.lifecycle.OnStopped;
 import org.apache.nifi.annotation.lifecycle.OnUnscheduled;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.expression.ExpressionLanguageScope;
 import org.apache.nifi.flowfile.FlowFile;
-import org.apache.nifi.annotation.lifecycle.OnScheduled;
-import org.apache.nifi.annotation.documentation.CapabilityDescription;
-import org.apache.nifi.annotation.documentation.SeeAlso;
-import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.processor.*;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.InputStreamCallback;
 import org.apache.nifi.processor.util.FlowFileFilters;
 import org.apache.nifi.processor.util.StandardValidators;
-import org.apache.pulsar.client.api.Schema;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Tags({"pulsar"})
 @CapabilityDescription("The Pulsar Producer Pre-Processor allows nifi to stream data to Apache Pulsar.")
@@ -48,7 +44,7 @@ import java.util.stream.Collectors;
 @InputRequirement(InputRequirement.Requirement.INPUT_REQUIRED)
 @WritesAttributes({@WritesAttribute(attribute="msg.count", description = "The number of messages that were sent to Kafka for this FlowFile. This attribute is added only to "
         + "FlowFiles that are routed to success.")})
-public class PulsarProducerProcessor extends AbstractProcessor {
+public class PulsarConsumerProcessor extends AbstractProcessor {
 
     static final PropertyDescriptor MESSAGE_DEMARCATOR = new PropertyDescriptor.Builder()
             .name("MESSAGE_DEMARCATOR")
@@ -81,29 +77,13 @@ public class PulsarProducerProcessor extends AbstractProcessor {
     protected void init(final ProcessorInitializationContext context) {
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
 
-        /**List<PropertyDescriptor> constantValues = Arrays.stream(PulsarPropertiesUtils.class.getDeclaredFields())
-                .filter(field -> Modifier.isStatic(field.getModifiers()))
-                .map(field -> {
-                    try {
-                        return (PropertyDescriptor) field.get(PulsarPropertiesUtils.class);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).collect(Collectors.toList());**/
         descriptors.add(PulsarPropertiesUtils.serviceUrl);
         descriptors.add(PulsarPropertiesUtils.useTls);
         descriptors.add(PulsarPropertiesUtils.tlsAllowInsecureConnection);
         descriptors.add(PulsarPropertiesUtils.tlsHostnameVerificationEnable);
         descriptors.add(PulsarPropertiesUtils.authPluginClassName);
         descriptors.add(PulsarPropertiesUtils.topicName);
-        descriptors.add(PulsarPropertiesUtils.sendTimeoutMs);
-        descriptors.add(PulsarPropertiesUtils.blockIfQueueFull);
-        descriptors.add(PulsarPropertiesUtils.batchingMaxPublishDelayMicros);
-        descriptors.add(PulsarPropertiesUtils.maxPendingMessages);
-        descriptors.add(PulsarPropertiesUtils.batchingMaxMessages);
-        descriptors.add(PulsarPropertiesUtils.batchingEnabled);
-        descriptors.add(PulsarPropertiesUtils.compressionType);
-        descriptors.add(PulsarPropertiesUtils.asyncEnabled);
+        descriptors.add(PulsarPropertiesUtils.subscriptionName);
         descriptors.add(MESSAGE_DEMARCATOR);
 
         this.descriptors = Collections.unmodifiableList(descriptors);

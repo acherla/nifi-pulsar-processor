@@ -176,6 +176,15 @@ public class PulsarPropertiesUtils {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+    public static final PropertyDescriptor subscriptionName = new PropertyDescriptor.Builder()
+            .name("subscriptionName")
+            .displayName("subscriptionName")
+            .description("Subscription name for the consumer")
+            .required(true)
+            .defaultValue("test-subscriber")
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
     public static final PropertyDescriptor asyncEnabled = new PropertyDescriptor.Builder()
             .name("asyncEnabled")
             .displayName("asyncEnabled")
