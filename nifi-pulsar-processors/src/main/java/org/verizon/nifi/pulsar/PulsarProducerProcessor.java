@@ -81,7 +81,7 @@ public class PulsarProducerProcessor extends AbstractProcessor {
     protected void init(final ProcessorInitializationContext context) {
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
 
-        List<PropertyDescriptor> constantValues = Arrays.stream(PulsarPropertiesUtils.class.getDeclaredFields())
+        /**List<PropertyDescriptor> constantValues = Arrays.stream(PulsarPropertiesUtils.class.getDeclaredFields())
                 .filter(field -> Modifier.isStatic(field.getModifiers()))
                 .map(field -> {
                     try {
@@ -89,9 +89,21 @@ public class PulsarProducerProcessor extends AbstractProcessor {
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
-                }).collect(Collectors.toList());
-
-        descriptors.addAll(constantValues);
+                }).collect(Collectors.toList());**/
+        descriptors.add(PulsarPropertiesUtils.serviceUrl);
+        descriptors.add(PulsarPropertiesUtils.useTls);
+        descriptors.add(PulsarPropertiesUtils.tlsAllowInsecureConnection);
+        descriptors.add(PulsarPropertiesUtils.tlsHostnameVerificationEnable);
+        descriptors.add(PulsarPropertiesUtils.authPluginClassName);
+        descriptors.add(PulsarPropertiesUtils.topicName);
+        descriptors.add(PulsarPropertiesUtils.sendTimeoutMs);
+        descriptors.add(PulsarPropertiesUtils.blockIfQueueFull);
+        descriptors.add(PulsarPropertiesUtils.batchingMaxPublishDelayMicros);
+        descriptors.add(PulsarPropertiesUtils.maxPendingMessages);
+        descriptors.add(PulsarPropertiesUtils.batchingMaxMessages);
+        descriptors.add(PulsarPropertiesUtils.batchingEnabled);
+        descriptors.add(PulsarPropertiesUtils.compressionType);
+        descriptors.add(PulsarPropertiesUtils.asyncEnabled);
 
         this.descriptors = Collections.unmodifiableList(descriptors);
 
