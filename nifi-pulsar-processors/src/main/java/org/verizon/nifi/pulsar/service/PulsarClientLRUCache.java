@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.verizon.nifi.pulsar.consumer;
+package org.verizon.nifi.pulsar.service;
 
 import org.apache.commons.collections4.map.LRUMap;
 

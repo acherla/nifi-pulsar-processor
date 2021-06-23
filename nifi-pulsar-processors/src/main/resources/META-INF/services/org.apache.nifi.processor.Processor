@@ -12,5 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-org.verizon.nifi.pulsar.PulsarProducerProcessor
-org.verizon.nifi.pulsar.PulsarConsumerProcessor
+org.verizon.nifi.pulsar.consumer.ConsumePulsar
+org.verizon.nifi.pulsar.consumer.ConsumePulsarRecord
+org.verizon.nifi.pulsar.producer.PublishPulsarRecord
+org.verizon.nifi.pulsar.producer.PublishPulsar

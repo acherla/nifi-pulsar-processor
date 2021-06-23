@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.verizon.nifi.pulsar;
+package org.verizon.nifi.pulsar.service;
 
-import org.apache.nifi.util.TestRunner;
-import org.apache.nifi.util.TestRunners;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.nifi.annotation.documentation.CapabilityDescription;
+import org.apache.nifi.annotation.documentation.Tags;
+import org.apache.nifi.controller.ControllerService;
+import org.apache.pulsar.client.api.PulsarClient;
 
+@Tags({"Pulsar", "client", "pool"})
+@CapabilityDescription("Provides the ability to create Pulsar Producer / Consumer instances on demand, "
+        + "based on the configuration properties defined.")
+public interface PulsarClientService extends ControllerService {
 
-public class PulsarProducerProcessorTest {
+    public PulsarClient getPulsarClient();
 
-    private TestRunner testRunner;
-
-    @Before
-    public void init() {
-        testRunner = TestRunners.newTestRunner(PulsarProducerProcessor.class);
-    }
-
-    @Test
-    public void testProcessor() {
-
-    }
+    public String getPulsarBrokerRootURL();
 
 }

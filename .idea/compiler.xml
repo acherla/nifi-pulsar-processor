@@ -10,5 +10,8 @@
         <module name="nifi-pulsar-processors" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="nifi-pulsar-client-service" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
