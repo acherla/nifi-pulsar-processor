@@ -176,6 +176,16 @@ public class PulsarPropertiesUtils {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+    public static final PropertyDescriptor ACK_TIMEOUT = new PropertyDescriptor.Builder()
+            .name("ACK_TIMEOUT")
+            .displayName("Acknowledgment Timeout")
+            .description("Set the timeout for unacked messages. Messages that are not acknowledged within the "
+                    + "configured timeout will be replayed. This value needs to be greater than 10 seconds.")
+            .addValidator(StandardValidators.TIME_PERIOD_VALIDATOR)
+            .defaultValue("30 sec")
+            .required(false)
+            .build();
+
     public static final PropertyDescriptor subscriptionName = new PropertyDescriptor.Builder()
             .name("subscriptionName")
             .displayName("subscriptionName")

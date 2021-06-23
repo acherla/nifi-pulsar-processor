@@ -138,7 +138,7 @@ public class PulsarProducerProcessor extends AbstractProcessor {
     }
 
     @OnStopped
-    public void onStopped(){
+    public void onStopped(final ProcessContext context){
         onUnscheduled();
     }
 
